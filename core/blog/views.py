@@ -2,7 +2,7 @@ from django.views.generic.base import TemplateView, RedirectView
 from .models import Post
 from django.views.generic.base import TemplateView, RedirectView
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 
 '''
 # function base view show a template
@@ -37,7 +37,6 @@ class RedirectToMaktab(RedirectView):
         return super().get_redirect_url(*args, **kwargs)
 
 
-
 class PostList(ListView):
     # model = Post
     content_object_name = 'posts'
@@ -45,3 +44,9 @@ class PostList(ListView):
     def get_queryset(self):
         posts = Post.object.filter(status=True)
         return posts
+
+
+class PostCreateView(FormView):
+    template_name = 'contact.html'
+    form_class = ContactForm
+    success_url = '/thanks/'
