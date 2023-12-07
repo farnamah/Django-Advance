@@ -2,7 +2,11 @@ from django.views.generic.base import TemplateView, RedirectView
 from .models import Post
 from django.views.generic.base import TemplateView, RedirectView
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, CreateView, UpdateView
+from .forms import PostForm
+from django.http import HttpResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 '''
 # function base view show a template
@@ -46,7 +50,35 @@ class PostList(ListView):
         return posts
 
 
+"""
 class PostCreateView(FormView):
     template_name = 'contact.html'
-    form_class = ContactForm
-    success_url = '/thanks/'
+    form_class = PostForm
+    success_url = '/blog/post/'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+"""
+
+
+class PostCreateView(CreateView):
+    model = Post
+    # fields = ['author', 'title', 'content', 'status', 'category', 'published_date']
+    form_class = PostForm
+    success_url = '/blog/post/'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class PostEditView(UpdateView):
+    model = Post
+    form_class = PostForm
+    success_url = '/blog/post/'
+
+
+@api_view()
+def api_post_list_view(request):
+    return Response("OK")
