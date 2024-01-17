@@ -8,6 +8,9 @@ from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, GenericAPIView, ListCreateAPIView, \
     RetrieveUpdateDestroyAPIView
 from rest_framework import mixins, viewsets
+from .permissions import IsOwnerOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 
 data = {
     "id": 1,
@@ -93,7 +96,6 @@ def postDetail(request, id):
         return Response({"detail": "Item deleted successfully"}, status=204)
 
 
-
 """
 class PostDetail(APIView):
     permission_classes = [IsAuthenticated]
@@ -143,6 +145,9 @@ class PostModelViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
+    filter_backends = [DjangoFilterBackend,SearchFilter]
+    filter_fields = ['category', 'author', 'status']
+    search_fields = ['title', 'content   ']
 
 
 '''
